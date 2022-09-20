@@ -8,6 +8,8 @@ import GameBanner from './components/GameBanner';
 import CreateAdBanner from './components/InfoBox';
 import api from './services/api';
 import InputGame from './components/InputGame';
+import { GameController } from 'phosphor-react';
+import ButtonGame from './components/ButtonGame';
 
 
 interface GameResponse{
@@ -21,6 +23,7 @@ interface GameResponse{
 
 function App() { 
   const [listGames, setListGames] = useState<GameResponse[]>([]);
+  const [weekDaysSelected, setWeekDaysSelected] = useState([])
   
   useEffect(()=>{
      api.get('/games')
@@ -63,7 +66,7 @@ function App() {
           <Dialog.Content className='fixed bg-[#2a2634] py-8 px-10 text-white top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg w-[480px] shadow-lg shadow-black/25'>
             <Dialog.Title className='text-3xl font-black'>Publique um anúncio</Dialog.Title>
 
-            <Dialog.Content>
+          
               <form className='mt-8 flex flex-col gap-4'>
 
                 <div className='flex flex-col gap-2'>
@@ -87,11 +90,45 @@ function App() {
                   </div>
                 </div>
 
-                <div>
-                  
+                <div className='flex gap-6'>
+                  <div className='flex flex-col gap-2'>
+                    <label htmlFor="weekDAys">Quando costuma jogar?</label>
+
+                    <div className='grid grid-cols-4 gap-1'>
+                     <ButtonGame title='Segunda' textButton='D'/>
+                     <ButtonGame title='Segunda' textButton='S'/>
+                     <ButtonGame title='Segunda' textButton='T'/>
+                     <ButtonGame title='Segunda' textButton='Q'/>
+                     <ButtonGame title='Segunda' textButton='Q'/>
+                     <ButtonGame title='Segunda' textButton='S'/>
+                     <ButtonGame title='Segunda' textButton='S'/>
+                    </div>
+
+                  </div>
+                  <div className='flex flex-col gap-2 flex-1'>
+                    <label htmlFor="hourStart">Qual horário do dia?</label>
+                    <div className='grid grid-cols-2 gap-2'>
+                      <InputGame type="time" id="hourStart" placeholder="De"/>
+                      <InputGame type="time" id="hourEnd" placeholder="Até"/>
+                    </div>
+                  </div>
                 </div>
-              </form>
-            </Dialog.Content>
+
+                <div className="mt-2 flex gap-2 text-sm">
+                  <InputGame type="checkbox" />
+                  Costumo me conectar ao chat de voz
+                </div>
+
+                <footer className='mt-4 flex justify-end gap-4'>
+                  <Dialog.Close className='bg-zinc-500 px-5 h-12 rounded-md font-semibold hover:bg-zinc-600'>Cancelar</Dialog.Close>
+                  <button type="submit"
+                    className='bg-violet-500 px-5 h-12 rounded-md font-semibold flex items-center gap-3 hover:bg-violet-600'
+                  >
+                    <GameController size={24}/>
+                    Encontrar duo
+                  </button>
+                </footer>
+              </form>       
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
