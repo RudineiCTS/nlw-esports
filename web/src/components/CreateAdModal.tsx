@@ -5,14 +5,46 @@ import * as Select from '@radix-ui/react-select';
 
 import { Check, GameController, CaretDown } from "phosphor-react";
 
-import ButtonGame from "./ButtonGame";
 import InputGame from "./InputGame";
 import { useGame } from '../hooks/useGame';
+import { GroupButton } from './GroupButton';
+import { FormEvent, useState } from 'react';
+
 
 
 export function CreateAdModal(){
-  const {games} = useGame()
+  const {games, addGame} = useGame()
+  const [weekDays, setWeekDays] = useState<string[]>([])
+  const [selectGame, setSelectGame] =useState<string>('');
+  const [voiceChannel, setVoiceChannel] = useState(false)
+  console.log(selectGame)
 
+  function handleSetWeekDays(day:any){
+    setWeekDays(day)
+  }
+
+  function handleCreateAd(event:FormEvent){
+    event.preventDefault();
+    
+    const formData = new FormData(event.target as HTMLFormElement);
+    const data = Object.fromEntries(formData);
+    if(!selectGame){
+      console.log('selecione um game')
+      return;
+    }
+    const [, gameId] = selectGame.split(','); 
+    const AdData = {
+      name: String(data.name),
+      yearsPlaying:Number(data.yearsPlaying),
+      discord:String(data.discord),
+      hourStart:String(data.hourStart),
+      hourEnd:String(data.hourEnd),
+      weekDays:weekDays.map(Number),
+      useVoiceChannel:voiceChannel
+    }
+    addGame(AdData, gameId)
+
+  }
 
   return(
   <Dialog.Portal>
@@ -21,12 +53,15 @@ export function CreateAdModal(){
             <Dialog.Title className='text-3xl font-black'>Publique um anúncio</Dialog.Title>
 
           
-              <form className='mt-8 flex flex-col gap-4'>
+              <form className='mt-8 flex flex-col gap-4' onSubmit={handleCreateAd}>
 
                 <div className='flex flex-col gap-2'>
                   <label htmlFor="game" className='font-semibold'>Qual o game?</label>
                   
-                  <Select.Root>
+                  <Select.Root
+                    onValueChange={setSelectGame}
+                    
+                  >
                     <Select.Trigger  
                     className='bg-zinc-900 py-3 px-4 rounded text-sm flex justify-between items-center '
                     
@@ -41,21 +76,22 @@ export function CreateAdModal(){
                     </Select.Trigger>
                     <Select.Portal>
                       <Select.Content  className='bg-zinc-900 py-3 px-4 rounded text-sm text-white'>
-                        <Select.ScrollUpButton />
                         <Select.Viewport>
                         
                         {games.map(game => {
                           return(
-                            <Select.Item value={game.id} className='flex items-center gap-2 hover:bg-violet-600 py-3 px-4 rounded'>
+                            <Select.Item key={game.id} 
+                              value={`${game.title},${game.id}`} 
+                              className='flex items-center gap-2 hover:bg-violet-600 py-3 px-4 rounded'
+                              >
                               <Select.ItemIndicator>
                                 <Check className='w-3 h-3 text-white'/>
                               </Select.ItemIndicator>
-                              <Select.ItemText>{game.title}</Select.ItemText>
+                              <Select.ItemText >{game.title}</Select.ItemText>
                             </Select.Item>       
                           )
                         })}
                         </Select.Viewport>
-                        <Select.ScrollDownButton />
                       </Select.Content>
                     </Select.Portal>
                   </Select.Root>             
@@ -63,52 +99,56 @@ export function CreateAdModal(){
 
                 <div className='flex flex-col gap-2'>
                   <label htmlFor="name" className='font-semibold'>Seu nome (ou nickname)</label>
-                    <InputGame id='name' placeholder='Como te chamam dentro do game?'/>                
+                    <InputGame name='name' id='name' placeholder='Como te chamam dentro do game?'/>                
                 </div>
                 
                 <div className='grid grid-cols-2 gap-6'>
                   <div className='flex flex-col gap-2'>
                     <label htmlFor="yearsPlaying">Joga há quantos anos?</label>
-                      <InputGame id='yearsPlaying' type='number' placeholder='Tudo bem ser ZERO'/>                
+                      <InputGame name="yearsPlaying" id='yearsPlaying' type='number' placeholder='Tudo bem ser ZERO'/>                
                   </div>
                   <div className='flex flex-col gap-2'>
                     <label htmlFor="discord">Qual é seu discord?</label>
-                      <InputGame id='discord' type='text' placeholder='Usuario#4444'/>                
+                      <InputGame name="discord" id='discord' type='text' placeholder='Usuario#4444'/>                
                   </div>
                 </div>
 
                 <div className='flex gap-6'>
                   <div className='flex flex-col gap-2'>
                     <label htmlFor="weekDAys">Quando costuma jogar?</label>
-
-                    <div className='grid grid-cols-4 gap-1'>
-                     <ButtonGame  title='Segunda' textButton='D'/>
-                     <ButtonGame title='Segunda' textButton='S'/>
-                     <ButtonGame title='Segunda' textButton='T'/>
-                     <ButtonGame title='Segunda' textButton='Q'/>
-                     <ButtonGame title='Segunda' textButton='Q'/>
-                     <ButtonGame title='Segunda' textButton='S'/>
-                     <ButtonGame title='Segunda' textButton='S'/>
-                    </div>
+       
+                   <GroupButton
+                    weekDays={weekDays}
+                    onSelectWeekDays={handleSetWeekDays}
+                  />
 
                   </div>
                   <div className='flex flex-col gap-2 flex-1'>
                     <label htmlFor="hourStart">Qual horário do dia?</label>
                     <div className='grid grid-cols-2 gap-2'>
-                      <InputGame type="time" id="hourStart" placeholder="De"/>
-                      <InputGame type="time" id="hourEnd" placeholder="Até"/>
+                      <InputGame name='hourStart' type="time" id="hourStart" placeholder="De"/>
+                      <InputGame name='hourEnd' type="time" id="hourEnd" placeholder="Até"/>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-2 flex items-center gap-2 text-sm">
-                  <Checkbox.Root className="w-6 h-6 p-1 rounded bg-zinc-900">
+                <label className="mt-2 flex items-center gap-2 text-sm">
+                  <Checkbox.Root 
+                  className="w-6 h-6 p-1 rounded bg-zinc-900"
+                  checked={voiceChannel}
+                  onCheckedChange={(checked)=>{
+                    if(checked=== true)
+                      setVoiceChannel(true)
+                    else
+                      setVoiceChannel(false)
+                  }}
+                  >
                     <Checkbox.Indicator>
                       <Check className="w-4 h-4 text-emerald-400" />
                     </Checkbox.Indicator>
                   </Checkbox.Root>
                   Costumo me conectar ao chat de voz
-                </div>
+                </label>
 
                 <footer className='mt-4 flex justify-end gap-4'>
                   <Dialog.Close className='bg-zinc-500 px-5 h-12 rounded-md font-semibold hover:bg-zinc-600'>Cancelar</Dialog.Close>

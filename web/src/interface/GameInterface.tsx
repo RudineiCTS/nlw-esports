@@ -8,3 +8,13 @@ export interface GameInterface{
     Ads:number
   }
 }
+
+export interface GameAdCreateData {
+discord:string, 
+hourEnd: string
+hourStart: string
+name: string
+useVoiceChannel: boolean
+weekDays: number[]
+yearsPlaying: number
+}
