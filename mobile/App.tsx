@@ -10,6 +10,8 @@ import {
 import {Home} from './src/screens/Home'
 import { Background } from './src/components/Background';
 import { Loading } from './src/components/Loading';
+import { GameProvider } from './src/hooks/useGames';
+import { Routes } from './src/routes';
 
 export default function App() {
   const [fontsLoad] = useFonts({
@@ -19,15 +21,17 @@ export default function App() {
     Inter_900Black,
   })
   return (
-    <Background >
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor='transparent'
-        translucent
-      />
-      {fontsLoad ? <Home/> : <Loading/>}
-    
-    </Background>
+    <GameProvider>
+      <Background >
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor='transparent'
+          translucent
+        />
+        {fontsLoad ? <Routes /> : <Loading/>}
+      
+      </Background>
+    </GameProvider>
   );
 }
 
