@@ -1,4 +1,4 @@
-import { FlatList, Image, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context'
 import {useNavigation, useRoute} from '@react-navigation/native'
 import { Entypo } from '@expo/vector-icons'
@@ -69,6 +69,11 @@ export function Game() {
               data={item}
               onConnect={()=>{}}
             />
+          )}
+          ListEmptyComponent={()=>(
+            <Text style={styles.emptyListText}>
+              Não há anúncios publicados ainda
+            </Text>
           )}
         />
        
