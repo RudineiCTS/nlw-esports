@@ -12,6 +12,7 @@ import { THEME } from '../../theme';
 import { styles } from './styles';
 import { DuoCard, DuoCardProps } from '../../components/DuoCard';
 import { useEffect, useState } from 'react';
+import {DuoMatch} from '../../components/DuoMatch'
 import api from '../../server/api';
 
 
@@ -20,6 +21,7 @@ export function Game() {
   const route = useRoute();
   const game = route.params as GameParams;
   const [gameInfo, setGameInfo] = useState<DuoCardProps[]>();
+  const [discordDuoSelected, setDiscordDuoSelected] =useState('');
   
   useEffect(() => {
     api.get(`/games/${game.id}/ads`)
@@ -77,7 +79,11 @@ export function Game() {
           )}
         />
        
-
+      <DuoMatch
+        visible={discordDuoSelected.length > 0}
+        discord='rudinei#ee21'
+        onClose={() => setDiscordDuoSelected('')}
+      />
       </SafeAreaView>
     </Background>
   );
