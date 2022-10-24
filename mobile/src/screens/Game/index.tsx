@@ -26,7 +26,13 @@ export function Game() {
   useEffect(() => {
     api.get(`/games/${game.id}/ads`)
     .then(response => setGameInfo(response.data));
+    
   },[])
+
+  async function getDiscordUser(adsId:string){
+    api.get(`/ads/${adsId}/discord`)
+    .then(response => setDiscordDuoSelected(response.data.discord));
+  }
 
   function handleGoBack() {
     navigation.goBack();
@@ -69,7 +75,7 @@ export function Game() {
           renderItem={({item}) => (
             <DuoCard
               data={item}
-              onConnect={()=>{}}
+              onConnect={()=>{ getDiscordUser(item.id)}}
             />
           )}
           ListEmptyComponent={()=>(
@@ -81,7 +87,7 @@ export function Game() {
        
       <DuoMatch
         visible={discordDuoSelected.length > 0}
-        discord='rudinei#ee21'
+        discord={discordDuoSelected}
         onClose={() => setDiscordDuoSelected('')}
       />
       </SafeAreaView>

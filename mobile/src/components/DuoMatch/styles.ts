@@ -32,7 +32,9 @@ export const styles = StyleSheet.create({
     fontSize:THEME.FONT_SIZE.MD,
     fontFamily:THEME.FONT_FAMILY.SEMI_BOLD,
 
-    marginTop:24,
+    paddingBottom:10,
+
+    marginTop:20,
     marginBottom:8,
     
   }, 
